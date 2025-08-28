@@ -41,7 +41,7 @@ app/
   
 │  └── vis_nlp.py # 이미지 + 메타데이터 모델 비즈니스 로직 처리
 
-└── main.py
+└── main.py # 최종 실행 파일
 
   ## 📌 설명
 - **models/**  
@@ -58,4 +58,4 @@ app/
   - 비즈니스 로직, 모델 로딩 및 전처리/후처리  
   - `segmentation.py`: 세그멘테이션 서비스  
   - `finetuned_llm.py`: LLM 파인튜닝 처리  
-  - `vis_nlp.py`: NLP 시각화 관련 로직  
+  - `vis_nlp.py`: 이미지 + 메타데이터 모델 비즈니스 로직 처리
