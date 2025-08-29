@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.services.vis_nlp import ViTFeatureExtractor, BertFeatureExtractor, CrossAttention, VISNLPEXTRACTOR, CaptionDecoder, CaptionGenerator, load_Generator, generate_caption
-from app.schema.image_meta_schema import patient_study, captioning_message
+from app.schema.image_meta_schema import patient, captioning_message
 from app.services.parsing_patientdata import PatientData
 import torch
 from transformers import AutoTokenizer
@@ -39,19 +39,17 @@ tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 captioning_model = load_Generator(model,MODEL_PATH)
 
 @router.post("/diagnosis", response_model=captioning_message)
-async def make_diagnosis(patient_study:patient_study):
+async def make_diagnosis(Patient:patient):
     """
         (기술 구현 어려움: 환자의 이전 과거 메타 데이터 참고해서 분석 진단 출력) 
         현재 메타 데이터를(진단 결과)와 이미지를 분석해 결과를 영문으로 출력합니다.
     """
     try:
-        studies_tag_data, series = parsing_patient.parsing_target_studies([patient_study.study])
-        instances_data, _ = parsing_patient.parsing_target_series(series)
-        instances_image = parsing_patient.parsing_target_dicom_image(instances_data)
+        instances_image = parsing_patient.parsing_target_dicom_image([Patient.instanceUUID])
 
         instances_image = instances_image / 255.0  # 0~1 normalize
         image_tensor = torch.from_numpy(instances_image).permute(0,3,1,2).to('cpu').float()
-        meta_label = mapping[studies_tag_data['StudyDescription']]
+        meta_label = mapping[Patient.description]
 
         with torch.no_grad():
             caption = generate_caption(captioning_model, image_tensor, meta_label, tokenizer, device='cpu')

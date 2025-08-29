@@ -13,6 +13,7 @@ app.add_middleware(
     allow_methods=["*"],    # 모든 HTTP 메서드(GET, POST 등) 허용
     allow_headers=["*"],    # 모든 헤더 허용
 )
+
 # 라우터 등록
 app.include_router(finetuned_gemma.router, prefix="/chat-bot", tags=["chat-bot"])
 app.include_router(segmentation_model.router, prefix="/image", tags=["image-segmentation"])
