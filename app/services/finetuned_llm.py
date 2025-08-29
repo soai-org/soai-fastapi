@@ -16,11 +16,13 @@ class FineTunedLLMModel:
         self.model = AutoModelForCausalLM.from_pretrained(
             base_model_path,
             torch_dtype=torch.float16,
-            device_map={"": "cpu"}  # GPU 사용 시 auto, CPU 사용 시 지정
+            device_map="cpu"
         )
         
         # 2️⃣ LoRA adapter 로드
-        model = PeftModel.from_pretrained(self.model, adapter_path)
+        model = PeftModel.from_pretrained(self.model, 
+                                          adapter_path,        
+                                          strict=False) # 레이어 불일치 경고 무시하고 로드)
         
         # 3️⃣ LoRA + Base 모델 병합
         model = model.merge_and_unload()
@@ -63,13 +65,4 @@ class FineTunedLLMModel:
 # ------------------------------
 # 사용 예시
 if __name__ == "__main__":
-    Gemma3_1b = FineTunedLLMModel()  # GPU 있으면 device="cuda"
-    question = """다음 중 가족 중심 중재(Family-Centered Intervention)에 대한 설명으로 옳은 것은?  
-                1) 가족 중심 중재는 모든 환자에서 동일한 효과를 보인다.  
-                2) 가족 중심 중재는 부작용이 자주 발생한다.  
-                3) 가족 중심 중재는 환자와 가족의 전반적인 건강과 복지를 향상시킬 가능성이 있다.  
-                4) 가족 중심 중재는 신체 건강만을 개선하는 데 초점이 맞춰져 있다.  
-                5) 가족 중심 중재는 연구에서 항상 비뚤림 위험이 없는 것으로 나타났다."""
-    
-    answer = Gemma3_1b.generate_answer(question)
-    print(f"테스트 출력: \n{answer}")
+    pass

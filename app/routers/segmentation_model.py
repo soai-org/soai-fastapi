@@ -17,9 +17,7 @@ model = load_model()
 async def segmentation(request:segmentation_request):
     try:
         # 1️⃣ 원본 DICOM → torch 변환
-        _, series = parse.parsing_target_studies([request.study])
-        instances_data, _ = parse.parsing_target_series(series)
-        instances_image = parse.parsing_target_dicom_image(instances_data)  # (N,H,W,3)
+        instances_image = parse.parsing_target_dicom_image([request.instanceUUID])  # (N,H,W,3)
         instances_image = instances_image / 255.0  # 0~1 normalize
         tensor = torch.from_numpy(instances_image).permute(0,3,1,2).to('cpu').float()
 
