@@ -1,0 +1,12 @@
+# venv
+.venv/*
+.venv
+
+# env
+.env
+
+# Models
+app/models
+
+# Python Cahced Filed
+__pycache__
