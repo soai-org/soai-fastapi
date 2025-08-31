@@ -7,8 +7,9 @@ import io
 from PIL import Image
 import numpy as np
 from fastapi.responses import StreamingResponse
+import os
 
-ORTHANC_URL = "http://127.0.0.1:8042"
+ORTHANC_URL = os.getenv("ORTHANC_URL")
 parse = PatientData(ORTHANC_URL)
 router = APIRouter()
 model = load_model()

@@ -1,15 +1,23 @@
 import requests
+from requests.auth import HTTPBasicAuth
 import io
 import numpy as np
 from typing import Tuple, Dict, List, Any
 import torch
+import os
+from dotenv import load_dotenv
 
-ORTHANC_URL = "http://127.0.0.1:8042"
+ORTHANC_URL = os.getenv("ORTHANC_URL")
 
 class PatientData:
     def __init__(self, ORTHANC_URL: str) -> None:
         self.ORTHANC_URL: str = ORTHANC_URL
-        self.all_patients: List[str] = requests.get(f"{self.ORTHANC_URL}/patients").json()
+
+        username = os.getenv("ORTHANC_USERNAME")
+        password = os.getenv("ORTHANC_PASSWORD")
+
+        basic_auth = HTTPBasicAuth(username, password)
+        self.all_patients: List[str] = requests.get(f"{self.ORTHANC_URL}/patients", auth=basic_auth).json()
 
     def parsing_target_patient(self, PATIENT_NAME: str) -> Tuple[Dict[str, Any], List[str]]:
         """

@@ -9,7 +9,7 @@ router = APIRouter()
 import os
 
 # Model Config
-ORTHANC_URL = "http://127.0.0.1:8042"
+ORTHANC_URL = os.getenv("ORTHANC_URL")
 IMG_WIDTH = 512
 IMG_DIM_HEIGHT = 512
 PATCH_SIZE = 16
