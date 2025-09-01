@@ -7,8 +7,12 @@ import io
 from PIL import Image
 import numpy as np
 from fastapi.responses import StreamingResponse
+from dotenv import load_dotenv
+import os
+import base64
 
-ORTHANC_URL = "http://127.0.0.1:8042"
+load_dotenv()
+ORTHANC_URL = os.getenv("ORTHANC_URL")
 parse = PatientData(ORTHANC_URL)
 router = APIRouter()
 model = load_model()
@@ -50,3 +54,4 @@ async def segmentation(request:segmentation_request):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+  

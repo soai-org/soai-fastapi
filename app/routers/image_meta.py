@@ -4,12 +4,15 @@ from app.schema.image_meta_schema import patient, captioning_message
 from app.services.parsing_patientdata import PatientData
 import torch
 from transformers import AutoTokenizer
+from dotenv import load_dotenv
+
 # router 설정
 router = APIRouter()
 import os
 
 # Model Config
-ORTHANC_URL = "http://127.0.0.1:8042"
+load_dotenv()
+ORTHANC_URL = os.getenv("ORTHANC_URL")
 IMG_WIDTH = 512
 IMG_DIM_HEIGHT = 512
 PATCH_SIZE = 16
