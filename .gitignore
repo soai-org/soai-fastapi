@@ -1,2 +1,4 @@
 __pycache__
 .venv
+.env
+gemma-3-1b-it-finetuned-final

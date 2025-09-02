@@ -3,6 +3,7 @@ from app.services.vis_nlp import ViTFeatureExtractor, BertFeatureExtractor, Cros
 from app.schema.image_meta_schema import patient, captioning_message
 from app.services.parsing_patientdata import PatientData
 import torch
+import json
 from transformers import AutoTokenizer
 from dotenv import load_dotenv
 
@@ -67,22 +68,25 @@ async def ws_diagnosis(websocket: WebSocket):
     while True:
         try:
             data = await websocket.receive_text()
-            payload = json.loads(data)
+            patient_data = patient.parse_raw(data)
 
-            instance_list = [payload["instanceUUID"]]
-            description = payload["description"]
-
-            instances_image = parsing_patient.parsing_target_dicom_image(instance_list)
+            instances_image = parsing_patient.parsing_target_dicom_image(
+                    [patient_data.instanceUUID],
+                    allow_pickle=True  # <- 여기서 pickle 허용
+                )
             instances_image = instances_image / 255.0
-            image_tensor = torch.from_numpy(instances_image).permute(0,3,1,2).to('cpu').float()
-            meta_label = mapping[description]
+            image_tensor = torch.from_numpy(instances_image).permute(0,3,1,2).float()
+
+            meta_label = mapping[patient_data.description]
 
             with torch.no_grad():
                 caption = generate_caption(captioning_model, image_tensor, meta_label, tokenizer, device='cpu')
 
-            await websocket.send_text(caption)
+            await websocket.send_text(json.dumps({"transcript": caption}))
 
         except Exception as e:
             await websocket.send_text(f"Error: {str(e)}")
+            await websocket.close()
+            break
         
         
