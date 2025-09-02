@@ -1,15 +1,21 @@
 import requests
+from requests.auth import HTTPBasicAuth
 import io
 import numpy as np
 from typing import Tuple, Dict, List, Any
 import torch
+import os
 
 ORTHANC_URL = "http://127.0.0.1:8042"
 
 class PatientData:
     def __init__(self, ORTHANC_URL: str) -> None:
         self.ORTHANC_URL: str = ORTHANC_URL
-        self.all_patients: List[str] = requests.get(f"{self.ORTHANC_URL}/patients").json()
+        username = os.getenv("ORTHANC_USERNAME")
+        password = os.getenv("ORTHANC_PASSWORD")
+        self.basic_auth = HTTPBasicAuth(username, password)
+        self.all_patients: List[str] = requests.get(f"{self.ORTHANC_URL}/patients", auth=self.basic_auth).json()
+
 
     def parsing_target_patient(self, PATIENT_NAME: str) -> Tuple[Dict[str, Any], List[str]]:
         """
@@ -24,7 +30,7 @@ class PatientData:
                 - 해당 환자의 Study UUID 리스트
         """
         for uuid in self.all_patients:
-            patients_info = requests.get(f"{self.ORTHANC_URL}/patients/{uuid}").json()
+            patients_info = requests.get(f"{self.ORTHANC_URL}/patients/{uuid}", auth=self.basic_auth).json()
             if patients_info.get("MainDicomTags", {}).get("PatientName") == PATIENT_NAME:
                 patient_tag_data: Dict[str, Any] = patients_info.get("MainDicomTags", {})
                 studies: List[str] = patients_info.get("Studies", [])
@@ -44,7 +50,7 @@ class PatientData:
                 - Series UUID 리스트
         """
         for study in studies:
-            studies_info = requests.get(f"{self.ORTHANC_URL}/studies/{study}").json()
+            studies_info = requests.get(f"{self.ORTHANC_URL}/studies/{study}", auth=self.basic_auth).json()
             studies_tag_data: Dict[str, Any] = studies_info.get("MainDicomTags", {})
             series: List[str] = studies_info.get("Series", [])
         return studies_tag_data, series
@@ -62,7 +68,7 @@ class PatientData:
                 - Modality (예: 'OT', 'CT', 'MR' 등)
         """
         for serial in series:
-            series_info = requests.get(f"{self.ORTHANC_URL}/series/{serial}").json()
+            series_info = requests.get(f"{self.ORTHANC_URL}/series/{serial}", auth=self.basic_auth).json()
             instances_data: List[str] = series_info.get("Instances", [])
             modality: str = series_info.get("MainDicomTags", {}).get("Modality", "")
         return instances_data, modality
@@ -79,6 +85,6 @@ class PatientData:
         """
         instances_images: List[np.ndarray] = []
         for instance in instances_data:
-            r = requests.get(f"{self.ORTHANC_URL}/instances/{instance}/numpy")
+            r = requests.get(f"{self.ORTHANC_URL}/instances/{instance}/numpy", auth=self.basic_auth)
             image: np.ndarray = np.load(io.BytesIO(r.content))
         return image
