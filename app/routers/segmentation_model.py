@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 from app.services.segmentation import load_model, predict
 from app.schema.segmentation_request_schema import segmentation_request
 from app.services.parsing_patientdata import PatientData
@@ -54,4 +54,20 @@ async def segmentation(request:segmentation_request):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-  
+
+@router.post("/segmentation_array")
+async def segmentation(request:segmentation_request):
+    try:
+        # 원본 DICOM → torch 변환
+        instances_image = parse.parsing_target_dicom_image([request.instanceUUID])  # (N,H,W,3)
+        instances_image = instances_image / 255.0  # 0~1 normalize
+        tensor = torch.from_numpy(instances_image).permute(0,3,1,2).to('cpu').float()
+
+        # 세그멘테이션
+        segmented_image = predict(model, tensor)  # (H, W)
+        segmented_image_np = (segmented_image > 0.5).astype(np.uint8) * 255
+
+        return {"data":segmented_image_np.tobytes().hex()}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
