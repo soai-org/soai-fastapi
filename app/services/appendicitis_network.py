@@ -252,7 +252,7 @@ class MVCBM(nn.Module):
 		self.encoder_arch = config['encoder_arch']
 
 		if config['encoder_arch'] == 'ResNet18':
-			self.c_encoder = ResNet18Encoder('../models/resnet18-5c106cde.pth').to(config["device"])
+			self.c_encoder = ResNet18Encoder('app/models/resnet18-5c106cde.pth').to(config["device"])
 		elif config['encoder_arch'] == 'FCNN':
 			self.c_encoder = FCNNEncoder(num_inputs=500, num_outputs=128, num_hidden=256, num_deep=2).to(config["device"])
 		else:
@@ -377,9 +377,9 @@ class ResNet18(nn.Module):
 
         # 모델 경로 설정
         if model_directory is not None:
-            pth_path = os.path.join('../models/resnet18-5c106cde.pth')
+            pth_path = os.path.join('app/models/resnet18-5c106cde.pth')
         else:
-            pth_path = "../models/resnet18-5c106cde.pth"
+            pth_path = "app/models/resnet18-5c106cde.pth"
 
         # torchvision 0.13+ 권장: pretrained=False 대신 weights=None
         self.model = models.resnet18(weights=None)

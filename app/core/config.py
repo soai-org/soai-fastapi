@@ -2,8 +2,10 @@ from pydantic_settings import BaseSettings
 from pathlib import Path
 class Settings(BaseSettings):
     # 디렉토리 설정
+    HF_TOKEN: str          # 반드시 대문자 HF_TOKEN으로 선언
+    ORTHANC_URL: str       # 반드시 대문자 ORTHANC_URL으로 선언
+    MODEL_DIR: str = "app/models"
     BASE_DIR: Path = Path(__file__).parent.parent.parent
-    MODEL_DIR: Path = BASE_DIR 
     TEMPLATE_DIR: Path = BASE_DIR / "templates"
     UPLOAD_DIR: Path = BASE_DIR / "uploads"
     PROCESSED_DIR: Path = BASE_DIR / "processed"
@@ -25,4 +27,6 @@ class Settings(BaseSettings):
     ALLOWED_EXTENSIONS: set = {'.png', '.jpg', '.jpeg', '.bmp'}
     class Config:
         env_file = ".env"
+        env_file_encoding = "utf-8"
+        extra = "forbid"  # 정의되지 않은 필드는 거부
 settings = Settings()

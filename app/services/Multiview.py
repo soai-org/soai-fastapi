@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 from PIL import Image
 from collections import defaultdict
-from appendicitis_network import create_model
+from app.services.appendicitis_network import create_model
 from app.core.config import settings
 
 class MultiViewService:
@@ -29,8 +29,8 @@ class MultiViewService:
                 'aggregator': 'lstm',  # Dataset에서 사용하는 LSTM aggregator
                 'num_concepts': 9,
                 'num_classes': 2,
-                'attention': False,
-                'fusion': False,
+                'attention': True,
+                'fusion': True,
                 'num_ex_feat': 0,
                 't_hidden_dim': 5,
                 'encoder_arch': 'ResNet18',
@@ -39,7 +39,7 @@ class MultiViewService:
             self.model = create_model(config)
             self.model = self.model.to(self.device)
            # 모델 경로를 Path 객체로
-            model_path = Path("../models/appendicitis_model.pth")
+            model_path = Path("app/models/appendicitis_model.pth")
             if model_path.exists():
                 state_dict = torch.load(model_path, map_location=self.device)
                 self.model.load_state_dict(state_dict, strict=False)
