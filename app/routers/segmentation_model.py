@@ -65,9 +65,7 @@ async def segmentation(request:segmentation_request):
 
         # 세그멘테이션
         segmented_image = predict(model, tensor)  # (H, W)
-        segmented_image_np = (segmented_image > 0.5).astype(np.uint8) * 255
-
+        segmented_image_np = (segmented_image > 0.5).astype(np.uint8) * 255 # 
         return {"data":segmented_image_np.tobytes().hex()}
-    
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
