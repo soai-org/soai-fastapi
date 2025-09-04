@@ -88,5 +88,6 @@ async def ws_diagnosis(websocket: WebSocket):
             await websocket.send_text(f"Error: {str(e)}")
             await websocket.close()
             break
+        await websocket.close()
         
         
