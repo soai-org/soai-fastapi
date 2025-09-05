@@ -21,6 +21,6 @@ async def ask_question(instanceUUID:AppendicitisUUIDLIST):
         results = {"appendcitis_probability" : results['results']['patient_0']['appendicitis_probability'],
                    "concept_scores" : results['results']['patient_0']['concept_scores'],
                    "num_views" : results['results']['patient_0']['num_views']}
-        return AppendicitisDescription(AppendicitisDescription=results)
+        return AppendicitisDescription(AppendicitisDescription={"AppendicitisDescription":results})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

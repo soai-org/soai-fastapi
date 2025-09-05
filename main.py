@@ -20,7 +20,6 @@ app.include_router(segmentation_model.router, prefix="/image", tags=["image-segm
 app.include_router(image_meta.router, prefix='/image-meta', tags = ["image-meta-diagnosis"])
 app.include_router(appendicitis_model.router, prefix='/appendicitis',tags=["appendicitis-diagnosis"])
 
-
 # FAST 실행명령어 자동 실행
 if __name__ == "__main__":
     uvicorn.run(app="main:app", host="0.0.0.0", port=8000, reload=True)  # reload=True : 코드 변경 시 서버 자동 재시작
