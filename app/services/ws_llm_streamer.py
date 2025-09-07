@@ -11,6 +11,9 @@ class WsLLMStreamer:
     WebSocket 전용 LLM 스트리밍 서비스
     - FineTuned Gemma 모델을 사용하여 실시간 토큰 스트리밍.
     """
+    
+    # 클래스 변수로 모델 인스턴스 저장 (싱글톤 패턴)
+    _llm_model = None
 
     def __init__(self):
         # 모델 인스턴스 생성
@@ -19,9 +22,28 @@ class WsLLMStreamer:
         self.model = self.llm_model.model
 
     @classmethod
+    def get_llm_model(cls):
+        """모델 인스턴스를 싱글톤으로 관리"""
+        if cls._llm_model is None:
+            print("LLM 모델 로딩 시작...")
+            try:
+                cls._llm_model = FineTunedLLMModel()
+                print("LLM 모델 로딩 완료!")
+            except Exception as e:
+                print(f"LLM 모델 로딩 실패: {e}")
+                raise e
+        return cls._llm_model
+    
+    @classmethod
+    def preload_model(cls):
+        if cls._llm_model is None:
+            cls.get_llm_model()
+
+    @classmethod
     async def stream_answer(cls, prompt: str) -> AsyncIterator[str]:
         try:
-            llm_model = FineTunedLLMModel()
+            # 싱글톤 모델 인스턴스 사용
+            llm_model = cls.get_llm_model()
             
             formatted_prompt = llm_model.prompt_template.format(question=prompt)
             inputs = llm_model.tokenizer(formatted_prompt, return_tensors="pt").to("cpu")

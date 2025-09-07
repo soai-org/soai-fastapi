@@ -10,9 +10,6 @@ async def ws_llm_stream(websocket: WebSocket):
     await websocket.accept()
     print("FastAPI WebSocket 연결됨")
     
-    # LLM 스트리머 인스턴스 생성
-    llm_streamer = WsLLMStreamer()
-    
     try:
         while True:
             message = await websocket.receive_text()
@@ -43,5 +40,4 @@ async def ws_llm_stream(websocket: WebSocket):
             pass
         finally:
             await websocket.close()
-
 
