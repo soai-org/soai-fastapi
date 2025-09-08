@@ -15,12 +15,12 @@ async def ask_question(instanceUUID:AppendicitisUUIDLIST):
     """충수염 판단 모델"""
     try:
         parsing_service = PatientData(ORTHANC_URL)
-        instances_images = parsing_service.parsing_target_dicom_images(instanceUUID.AppendicitisUuidList)
+        instances_images = parsing_service.parsing_target_dicom_images(instanceUUID.appendicitisUuidList)
         images, mask, _ = business_service.create_multiview_batch(instances_images)
         results = business_service.predict_multiview_tensor(images, mask)
         results = {"appendcitis_probability" : results['results']['patient_0']['appendicitis_probability'],
                    "concept_scores" : results['results']['patient_0']['concept_scores'],
                    "num_views" : results['results']['patient_0']['num_views']}
-        return AppendicitisDescription(AppendicitisDescription={"AppendicitisDescription":results})
+        return AppendicitisDescription(**results)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

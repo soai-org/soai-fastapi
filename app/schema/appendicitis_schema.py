@@ -2,7 +2,9 @@ from pydantic import BaseModel
 from typing import List, Dict, Any
 
 class AppendicitisUUIDLIST(BaseModel):
-    AppendicitisUuidList: List[str]
+    appendicitisUuidList: List[str]
     
 class AppendicitisDescription(BaseModel):
-    AppendicitisDescription: Dict[str, Any]
+    appendcitis_probability: float
+    concept_scores: Dict[str, float]
+    num_views: int
