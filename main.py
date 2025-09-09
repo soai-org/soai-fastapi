@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import finetuned_gemma, segmentation_model, image_meta, appendicitis_model
+from app.routers import finetuned_gemma, segmentation_model, image_meta, appendicitis_model, skin_trouble_model
 import uvicorn
 
 app = FastAPI()
@@ -19,6 +19,7 @@ app.include_router(finetuned_gemma.router, prefix="/chat-bot", tags=["chat-bot"]
 app.include_router(segmentation_model.router, prefix="/image", tags=["image-segmentation"])
 app.include_router(image_meta.router, prefix='/image-meta', tags = ["image-meta-diagnosis"])
 app.include_router(appendicitis_model.router, prefix='/appendicitis',tags=["appendicitis-diagnosis"])
+app.include_router(skin_trouble_model.router, prefix='/skin', tags=["skintrouble-prediction"])
 
 # FAST 실행명령어 자동 실행
 if __name__ == "__main__":
