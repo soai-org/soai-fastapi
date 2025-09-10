@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import finetuned_gemma, segmentation_model, image_meta, ws_finetuned_gemma, ws_nlp_streamer
+from app.routers import finetuned_gemma, segmentation_model, image_meta, ws_finetuned_gemma, ws_nlp_streamer, appendicitis_model, skin_trouble_model
 from app.services.ws_llm_streamer import WsLLMStreamer
 from app.services.ws_nlp_streamer import WsNLPStreamer
 import uvicorn
@@ -40,6 +40,8 @@ app.include_router(segmentation_model.router, prefix="/image", tags=["image-segm
 app.include_router(image_meta.router, prefix='/image-meta', tags = ["image-meta-diagnosis"])
 app.include_router(ws_finetuned_gemma.router, prefix="/chat-bot-ws", tags=["chat-bot-ws"])
 app.include_router(ws_nlp_streamer.router, prefix="/image-meta-ws", tags=["image-meta-diagnosis-ws"])
+app.include_router(appendicitis_model.router, prefix='/appendicitis',tags=["appendicitis-diagnosis"])
+app.include_router(skin_trouble_model.router, prefix='/skin', tags=["skintrouble-prediction"])
 
 # FAST 실행명령어 자동 실행
 if __name__ == "__main__":
