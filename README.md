@@ -122,6 +122,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 │   │   ├── image_meta_schema.py   # 이미지 메타데이터 API의 요청/응답 스키마
 │   │   └── segmentation_request_schema.py # 이미지 분할 API의 요청/응답 스키마
 │   └── services
+│       └── gemma-3-1b-it-finetuned-final # FineTuned Gemma3 - 1b 가중치 폴더
 │       ├── appendicitis_network.py # 충수염 진단 모델의 네트워크 구조 정의
 │       ├── finetuned_llm.py        # Fine-tuned LLM 관련 비즈니스 로직
 │       ├── Multiview.py            # Multi-view 이미지 처리 로직
