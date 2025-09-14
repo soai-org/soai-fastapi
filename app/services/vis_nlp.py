@@ -109,13 +109,21 @@ class CaptionGenerator(nn.Module):
         return logits
 
 # Load Image Captioning Generator Based on (Vision + Meta Data)
-def load_Generator(model:CaptionGenerator, model_path:str ='../models/image_meta.pth'):
+def load_Generator(model:CaptionGenerator, model_path:str ='app/models/image_meta.pth'):
     model = model.to('cpu')
     try:
-        state_dict = torch.load(model_path, map_location='cpu')
+        # PyTorch 버전에 따라 allow_pickle 파라미터 지원 여부가 다름
+        try:
+            # 최신 버전에서 allow_pickle 시도
+            state_dict = torch.load(model_path, map_location='cpu', allow_pickle=True)
+        except TypeError:
+            # 구버전에서는 allow_pickle 파라미터 제거
+            state_dict = torch.load(model_path, map_location='cpu')
+        
         model.load_state_dict(state_dict)
         return model
     except Exception as e:
+        print(f"모델 로드 실패: {e}")
         return f"모델 로드 실패: {e}"
 
 # Generate Caption with Model Predictions
