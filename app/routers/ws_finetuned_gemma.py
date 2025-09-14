@@ -1,6 +1,6 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from app.services.ws_llm_streamer import WsLLMStreamer
-
+import asyncio
 
 router = APIRouter()
 
@@ -21,6 +21,7 @@ async def ws_llm_stream(websocket: WebSocket):
                 async for chunk in WsLLMStreamer.stream_answer(message):
                     print(f"토큰 전송: {chunk}")
                     await websocket.send_text(chunk)
+                    await asyncio.sleep(0)
                 
                 # 스트리밍 완료 신호
                 await websocket.send_text("\n--- 스트리밍 완료 ---\n")

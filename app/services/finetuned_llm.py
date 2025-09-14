@@ -38,6 +38,7 @@ class FineTunedLLMModel:
             "- 답변은 최대 7줄까지만 작성\n"
             "- 전문적이면서도 이해하기 쉽게 작성\n"
             "- 필요한 경우 예시 포함\n"
+            "- 한글로만 답변할 것\n"
             "### 답변: "
         )
         self.model = model

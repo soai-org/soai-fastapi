@@ -70,7 +70,6 @@ class WsLLMStreamer:
             for token in streamer:
                 if token.strip(): 
                     yield token
-                    # await asyncio.sleep(0.1)  # 실시간 효과를 위한 지연
                     
         except Exception as e:
             yield f"오류가 발생했습니다: {str(e)}"
