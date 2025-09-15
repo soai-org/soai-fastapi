@@ -45,7 +45,7 @@ class WsNLPStreamer:
                 )
                 
                 # 모델 로드
-                model = load_Generator(caption_generator, '../models/image_meta.pth')
+                model = load_Generator(caption_generator, 'app/models/image_meta.pth')
                 
                 # 모델과 토크나이저를 함께 저장
                 cls._nlp_model = {

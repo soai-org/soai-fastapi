@@ -5,6 +5,7 @@ import numpy as np
 from typing import Tuple, Dict, List, Any
 import torch
 import os
+from torchvision import transforms as T
 
 ORTHANC_URL = "http://127.0.0.1:8042"
 
@@ -88,3 +89,25 @@ class PatientData:
             r = requests.get(f"{self.ORTHANC_URL}/instances/{instance}/numpy", auth=self.basic_auth)
             image: np.ndarray = np.load(io.BytesIO(r.content))
         return image
+    
+    def parsing_target_dicom_images(self, instances_data: List[str]) -> List[np.ndarray]:
+        """
+        해당 환자의 복부 X-Ray DICOM Image 추출
+        Args:
+            instances_data (List[str]): Instances UUID 리스트
+        Returns:
+            List[np.ndarray]: 각 Instance의 numpy 이미지 배열 (BATCH_SIZE, H, W, C)
+        """
+        instances_images = []
+        norm_transform = T.Normalize(mean=[0.485, 0.456, 0.406],
+                                    std=[0.229, 0.224, 0.225])
+        for instance in instances_data:
+            r = requests.get(f"{self.ORTHANC_URL}/instances/{instance}/numpy", auth=self.basic_auth)
+            image: np.ndarray = np.load(io.BytesIO(r.content)).squeeze(-1).squeeze(0)   # (H, W)
+            image = image / 255.0                                           # normalize to [0,1]
+            image = torch.from_numpy(image).float()                         # (H, W)
+            image = image.unsqueeze(0)                                      # (1, H, W)
+            image = image.repeat(3, 1, 1)                                   # (3, H, W)
+            image = norm_transform(image)                                   # (3, H, W)
+            instances_images.append(image)
+        return torch.stack(instances_images, dim=0)  # (BATCH, 3, H, W)
